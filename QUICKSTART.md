@@ -1,166 +1,120 @@
-# 🚀 Quick Start Guide
+# Quick Start Guide
 
-Get up and running in under 2 minutes!
+Get tracking your symptoms in under 1 minute!
 
-## Installation (30 seconds)
-
-```bash
-# Option 1: Quick install
-pip install -r requirements.txt
-python main.py
-
-# Option 2: Use the install script
-chmod +x install.sh
-./install.sh
-```
-
-## First Entry (30 seconds)
-
-1. **Launch**: `python main.py`
-2. **Press** `1` for Quick Entry
-3. **Select** symptom type (use arrow keys)
-4. **Enter** severity (1-10)
-5. **Type** a brief description
-6. **Press** `Ctrl+S` to save
-7. **Done!** ✓
-
-## Essential Keyboard Shortcuts
-
-| Key | Action |
-|-----|--------|
-| `1` | Quick Entry (from main menu) |
-| `2` | View History |
-| `3` | Search Symptoms |
-| `4` | Export Data |
-| `Q` | Quit |
-| `Ctrl+S` | Save Entry |
-| `Esc` | Go Back |
-| `Tab` | Next Field |
-
-## Quick Tips for Speed
-
-### Fastest Entry Method
-1. Press `1` (Quick Entry)
-2. Arrow down to your symptom or press Enter if it's pre-selected
-3. Tab to severity, type number
-4. Tab to description, type brief note
-5. `Ctrl+S` to save
-
-**Total time: ~10-15 seconds** ⚡
-
-### Skip Optional Fields
-Only 3 fields are required:
-- Symptom type
-- Severity (1-10)
-- Description
-
-Everything else is optional. Skip what you don't need!
-
-### Common Workflows
-
-**Morning check-in:**
-```
-1 → Select symptom → Tab → Severity → Tab → "Woke up with this" → Ctrl+S
-```
-
-**Quick pain log:**
-```
-1 → Pain → Tab → 7 → Tab → "Sharp pain in lower back" → Ctrl+S
-```
-
-**Medication tracking:**
-```
-1 → Symptom → Severity → Description → Tab through to Medications →
-"Ibuprofen 400mg at 10am" → Ctrl+S
-```
-
-## Export Your Data
-
-### To share with your doctor:
-1. Press `4` (Export)
-2. Choose "Export to .txt"
-3. File saved to `symptom_data/symptom_export_TIMESTAMP.txt`
-4. Open and print or email to doctor
-
-### For long-term tracking:
-1. Press `4` (Export)
-2. Choose "Export to .org"
-3. Open in Emacs or any text editor
-4. Organized by date with full details
-
-## File Locations
-
-```
-health-symptom-tui/
-├── main.py              # Run this
-├── symptom_tracker.py   # Data handling
-├── symptom_data/        # Your data
-│   ├── symptoms.json    # Database
-│   ├── *.txt            # Text exports
-│   └── *.org            # Org exports
-```
-
-## Backup Your Data
-
-**Important:** Backup regularly!
+## Installation (10 seconds)
 
 ```bash
-# Quick backup
-cp -r symptom_data symptom_data_backup
-
-# Or just the database
-cp symptom_data/symptoms.json symptoms_backup.json
+cd health-symptom-tui
+chmod +x tracker.py
 ```
 
-## Accessibility Features
+That's it! No dependencies required (python-dateutil is optional).
 
-✅ **100% keyboard driven** - No mouse needed
-✅ **Tab navigation** - Move through fields easily
-✅ **Single-key commands** - Main menu uses 1, 2, 3, 4, Q
-✅ **Clear visual hierarchy** - Easy to scan
-✅ **Quick defaults** - Minimal typing required
-✅ **Escape anywhere** - Always easy to exit
+## Your First Entry (10 seconds)
 
-## Example Session
-
+**Option 1: Interactive (Easiest)**
+```bash
+python tracker.py quick
 ```
-# Start the app
-$ python main.py
+Answer 3 questions and you're done!
 
-# You see the main menu
-# Press 1 for Quick Entry
+**Option 2: One Command (Fastest)**
+```bash
+python tracker.py add -s "Headache" -S 7 -d "Throbbing pain in temples"
+```
 
-# Use arrows to select "Headache"
-# Press Enter or Tab
+## Essential Commands
 
-# Type: 7 (severity)
-# Press Tab
+```bash
+# Add a symptom
+python tracker.py add -s "Headache" -S 7 -d "Pain after work"
 
-# Type: "Throbbing pain behind eyes after screen time"
-# Press Ctrl+S
+# Track multiple symptoms
+python tracker.py add -s "Headache, Nausea" -S 8 -d "Migraine symptoms"
 
-# ✓ Saved! Back to main menu
+# View recent entries
+python tracker.py list
 
-# Press 2 to view history
-# See your entry in the table
+# Get statistics
+python tracker.py stats
 
-# Press E to export
-# Choose .txt format
-# ✓ Exported!
+# Search
+python tracker.py search "headache"
 
-# Press Esc twice to get back to main menu
-# Press Q to quit
+# Export for doctor
+python tracker.py export --format txt
+```
+
+## Real World Examples
+
+### Quick daily log
+```bash
+python tracker.py add -s "Fatigue" -S 6 -d "Tired, didn't sleep well"
+```
+
+### Track pain with medication
+```bash
+python tracker.py add -s "Back pain" -S 8 \
+  -d "Lower back pain" -l "lumbar" -m "ibuprofen 400mg"
+```
+
+### Multiple symptoms
+```bash
+python tracker.py add -s "Headache, Nausea, Dizziness" -S 9 \
+  -d "Bad migraine attack" -t "stress, lack of sleep"
+```
+
+### Review for appointment
+```bash
+python tracker.py list -n 30
+python tracker.py stats
+python tracker.py export --format txt -o doctor_visit.txt
+```
+
+## Tips for Speed
+
+### Create an alias
+Add to `~/.bashrc` or `~/.zshrc`:
+```bash
+alias sym='python3 /full/path/to/tracker.py'
+```
+
+Then just:
+```bash
+sym quick
+sym add -s "Headache" -S 7 -d "Pain"
+sym list
+```
+
+### Use short flags
+```bash
+sym add -s "Pain" -S 6 -d "Back hurts" -l "lower back" -m "tylenol"
+```
+
+### Interactive mode for casual logging
+```bash
+sym quick
+# Just answer 3 questions, skip optional fields
+```
+
+## Get Help
+
+```bash
+# Main help
+python tracker.py --help
+
+# Command-specific help
+python tracker.py add --help
+python tracker.py list --help
 ```
 
 ## Next Steps
 
-- Read the full [README.md](README.md) for detailed documentation
-- Check out all keyboard shortcuts
-- Learn about search and filtering
-- Explore both export formats
+- Read the full [README.md](README.md) for all features
+- Set up a shell alias for faster access
+- Create automated backups with cron
 
 ---
 
 **Remember**: This is for personal tracking. Always consult healthcare professionals for medical advice!
-
-Need help? Check [README.md](README.md) for troubleshooting.
