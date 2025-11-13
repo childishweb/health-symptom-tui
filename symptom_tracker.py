@@ -84,10 +84,16 @@ class SymptomDatabase:
     def export_to_txt(self, filename: Optional[str] = None) -> str:
         """Export symptoms to formatted text file"""
         if filename is None:
+            # Always create a "latest" file plus timestamped backup
+            latest_file = self.data_dir / "symptoms_latest.txt"
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = self.data_dir / f"symptom_export_{timestamp}.txt"
+            backup_file = self.data_dir / f"symptoms_{timestamp}.txt"
+            filename = latest_file
+        else:
+            latest_file = None
+            backup_file = None
 
-        with open(filename, 'w') as f:
+        def write_txt(f):
             f.write("=" * 80 + "\n")
             f.write("HEALTH SYMPTOM TRACKER - EXPORT\n")
             f.write("=" * 80 + "\n\n")
@@ -116,15 +122,30 @@ class SymptomDatabase:
 
                 f.write("\n")
 
+        # Write to main file
+        with open(filename, 'w') as f:
+            write_txt(f)
+
+        # Also write backup if auto-exporting
+        if backup_file:
+            with open(backup_file, 'w') as f:
+                write_txt(f)
+
         return str(filename)
 
     def export_to_org(self, filename: Optional[str] = None) -> str:
         """Export symptoms to Org-mode format"""
         if filename is None:
+            # Always create a "latest" file plus timestamped backup
+            latest_file = self.data_dir / "symptoms_latest.org"
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = self.data_dir / f"symptom_export_{timestamp}.org"
+            backup_file = self.data_dir / f"symptoms_{timestamp}.org"
+            filename = latest_file
+        else:
+            latest_file = None
+            backup_file = None
 
-        with open(filename, 'w') as f:
+        def write_org(f):
             f.write("#+TITLE: Health Symptom Tracker Export\n")
             f.write(f"#+DATE: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             f.write("#+AUTHOR: Health Symptom Tracker\n\n")
@@ -165,6 +186,15 @@ class SymptomDatabase:
                         f.write(f"*Medications:* {entry.medications}\n\n")
                     if entry.notes:
                         f.write(f"*Notes:*\n{entry.notes}\n\n")
+
+        # Write to main file
+        with open(filename, 'w') as f:
+            write_org(f)
+
+        # Also write backup if auto-exporting
+        if backup_file:
+            with open(backup_file, 'w') as f:
+                write_org(f)
 
         return str(filename)
 

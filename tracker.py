@@ -104,10 +104,18 @@ def cmd_add(args, db):
     )
 
     db.add_entry(entry)
+
+    # Auto-export to both formats
+    txt_file = db.export_to_txt()
+    org_file = db.export_to_org()
+
     print("Symptom entry saved")
     print(f"  Symptom(s): {entry.symptom_type}")
     print(f"  Severity: {entry.severity}/10")
     print(f"  Time: {entry.timestamp}")
+    print(f"\nAuto-exported:")
+    print(f"  TXT: {txt_file}")
+    print(f"  ORG: {org_file}")
     return 0
 
 
@@ -125,19 +133,38 @@ def cmd_quick(args, db):
 
         # Show personalized suggestions
         if completer:
-            suggestions = completer.get_suggestions()[:10]
-            print("\nSuggestions (press TAB to autocomplete):")
+            suggestions = completer.get_suggestions()[:15]
+            print("\nTop suggestions (most-used first):")
+            print("=" * 60)
             for i, s in enumerate(suggestions, 1):
-                print(f"  {i}. {s}")
+                print(f"  {i:2d}. {s}")
+            print("=" * 60)
+            if HAS_READLINE:
+                print("\nTIP: Press TAB while typing to autocomplete")
+            else:
+                print("\nNOTE: Tab completion not available on this system")
+            print("      Type a number (1-15) or enter symptom name")
             print()
         else:
             print("\nCommon symptoms: " + ", ".join(COMMON_SYMPTOMS[:7]))
             print()
 
-        symptom = input("Symptom(s) [separate multiple with commas]: ").strip()
-        if not symptom:
+        user_input = input("Symptom(s) [#, name, or comma-separated]: ").strip()
+        if not user_input:
             print("ERROR: Symptom type is required")
             return 1
+
+        # Check if user entered a number
+        if user_input.isdigit():
+            num = int(user_input)
+            if 1 <= num <= len(suggestions):
+                symptom = suggestions[num - 1]
+                print(f"Selected: {symptom}")
+            else:
+                print(f"ERROR: Invalid number. Choose 1-{len(suggestions)}")
+                return 1
+        else:
+            symptom = user_input
 
     severity = args.severity
     if not severity:
@@ -173,9 +200,17 @@ def cmd_quick(args, db):
     )
 
     db.add_entry(entry)
+
+    # Auto-export to both formats
+    txt_file = db.export_to_txt()
+    org_file = db.export_to_org()
+
     print("\n" + "="*60)
     print("Symptom entry saved")
     print(f"  {symptom} - Severity: {severity}/10")
+    print("\nAuto-exported:")
+    print(f"  TXT: {txt_file}")
+    print(f"  ORG: {org_file}")
     print("="*60)
     return 0
 
