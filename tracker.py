@@ -8,6 +8,75 @@ import sys
 from datetime import datetime
 from symptom_tracker import SymptomDatabase, SymptomEntry, COMMON_SYMPTOMS
 
+try:
+    import readline
+    HAS_READLINE = True
+except ImportError:
+    HAS_READLINE = False
+
+
+class SymptomCompleter:
+    """Tab completion for symptom names"""
+
+    def __init__(self, db):
+        self.db = db
+        self.matches = []
+
+    def get_suggestions(self):
+        """Get symptom suggestions sorted by frequency"""
+        suggestions = []
+
+        # Get symptom frequency from database
+        stats = self.db.get_stats()
+        if stats['symptom_types']:
+            # Add previously used symptoms, sorted by frequency
+            for symptom, count in sorted(stats['symptom_types'].items(),
+                                        key=lambda x: x[1], reverse=True):
+                # Split multi-symptoms and add each individually
+                for s in symptom.split(','):
+                    s = s.strip()
+                    if s and s not in suggestions:
+                        suggestions.append(s)
+
+        # Add common symptoms that aren't already in the list
+        for symptom in COMMON_SYMPTOMS:
+            if symptom not in suggestions:
+                suggestions.append(symptom)
+
+        return suggestions
+
+    def complete(self, text, state):
+        """Completion function for readline"""
+        if state == 0:
+            # Generate matches on first call
+            suggestions = self.get_suggestions()
+            if text:
+                # Filter suggestions that start with the text
+                self.matches = [s for s in suggestions
+                               if s.lower().startswith(text.lower())]
+            else:
+                self.matches = suggestions
+
+        try:
+            return self.matches[state]
+        except IndexError:
+            return None
+
+
+def setup_completion(db):
+    """Setup tab completion for symptoms"""
+    if not HAS_READLINE:
+        return None
+
+    completer = SymptomCompleter(db)
+    readline.set_completer(completer.complete)
+    readline.parse_and_bind("tab: complete")
+
+    # Show all matches on first tab press
+    readline.parse_and_bind("set show-all-if-ambiguous on")
+
+    return completer
+
 
 def cmd_add(args, db):
     """Add a new symptom entry"""
@@ -44,10 +113,27 @@ def cmd_add(args, db):
 
 def cmd_quick(args, db):
     """Quick entry - minimal fields"""
+    # Setup tab completion
+    completer = setup_completion(db)
+
     # Get inputs interactively if not provided
     symptom = args.symptom
     if not symptom:
-        print("\nCommon symptoms: " + ", ".join(COMMON_SYMPTOMS[:7]))
+        print("\n" + "="*60)
+        print("QUICK SYMPTOM ENTRY")
+        print("="*60)
+
+        # Show personalized suggestions
+        if completer:
+            suggestions = completer.get_suggestions()[:10]
+            print("\nSuggestions (press TAB to autocomplete):")
+            for i, s in enumerate(suggestions, 1):
+                print(f"  {i}. {s}")
+            print()
+        else:
+            print("\nCommon symptoms: " + ", ".join(COMMON_SYMPTOMS[:7]))
+            print()
+
         symptom = input("Symptom(s) [separate multiple with commas]: ").strip()
         if not symptom:
             print("ERROR: Symptom type is required")
@@ -87,7 +173,10 @@ def cmd_quick(args, db):
     )
 
     db.add_entry(entry)
-    print("\nSymptom entry saved")
+    print("\n" + "="*60)
+    print("Symptom entry saved")
+    print(f"  {symptom} - Severity: {severity}/10")
+    print("="*60)
     return 0
 
 

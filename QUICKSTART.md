@@ -13,11 +13,13 @@ That's it! No dependencies required (python-dateutil is optional).
 
 ## Your First Entry (10 seconds)
 
-**Option 1: Interactive (Easiest)**
+**Option 1: Interactive with Smart Autocomplete (Easiest)**
 ```bash
 python tracker.py quick
 ```
-Answer 3 questions and you're done!
+Answer 3 questions. Press TAB to autocomplete symptoms!
+- Type "he" + TAB → "Headache"
+- Your most-used symptoms appear first
 
 **Option 2: One Command (Fastest)**
 ```bash
@@ -97,6 +99,13 @@ sym add -s "Pain" -S 6 -d "Back hurts" -l "lower back" -m "tylenol"
 sym quick
 # Just answer 3 questions, skip optional fields
 ```
+
+### Use autocomplete
+When using `quick` mode:
+- Start typing and press TAB to see matches
+- Type "he" + TAB → autocompletes to "Headache"
+- Your frequent symptoms appear first in suggestions
+- Example: Track "Red eyes" a few times, then "re" + TAB will suggest it
 
 ## Get Help
 

@@ -46,7 +46,7 @@ python tracker.py add -s "Headache" -S 7 -d "Throbbing pain in temples"
 
 ### Quick Entry (Interactive)
 
-The fastest way to log symptoms:
+The fastest way to log symptoms with **smart autocomplete**:
 
 ```bash
 python tracker.py quick
@@ -56,6 +56,12 @@ This will prompt you for:
 - Symptom type(s)
 - Severity (1-10)
 - Description
+
+**Smart Features:**
+- **Tab completion**: Type "he" then press TAB to autocomplete "Headache"
+- **Frequency-based suggestions**: Your most-used symptoms appear first
+- **Common symptoms**: Standard symptoms (Headache, Nausea, etc.) are always available
+- **Example**: If you often track "Red eyes", typing "re" + TAB will autocomplete it
 
 ### Add Symptom (Command Line)
 
@@ -219,11 +225,22 @@ cp symptom_data/symptoms.json symptoms_backup_$(date +%Y%m%d).json
 ## Accessibility Features
 
 - **Fast**: Add a symptom in seconds with one command
+- **Smart Autocomplete**: Tab completion with frequency-based suggestions
 - **Simple**: Only 3 required fields (symptom, severity, description)
 - **Keyboard-only**: Standard command-line interface
-- **No dependencies**: Minimal requirements (just Python)
+- **Learns Your Patterns**: Most-used symptoms appear first in suggestions
+- **No Dependencies**: Minimal requirements (just Python)
 - **Offline**: Works anywhere, no internet needed
 - **Private**: All data stays on your computer
+
+### How Autocomplete Works
+
+1. **Type and Tab**: Start typing a symptom name and press TAB
+2. **Smart Ordering**: Your frequently-used symptoms appear first
+3. **Example Usage**:
+   - Type `head` + TAB → autocompletes to "Headache"
+   - If you've tracked "Red eyes" 5 times, typing `re` + TAB → "Red eyes"
+   - If you track "Stomach pain" often, it will appear at the top of suggestions
 
 ## Command Reference
 
