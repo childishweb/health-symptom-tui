@@ -70,9 +70,19 @@ def setup_completion(db):
 
     completer = SymptomCompleter(db)
     readline.set_completer(completer.complete)
-    readline.parse_and_bind("tab: complete")
 
-    # Show all matches on first tab press
+    # Set delimiters (so comma-separated symptoms work)
+    readline.set_completer_delims(' \t\n,')
+
+    # Mac uses libedit, Linux uses GNU readline - different bindings
+    if 'libedit' in readline.__doc__:
+        # Mac/BSD with libedit
+        readline.parse_and_bind("bind ^I rl_complete")
+    else:
+        # GNU readline (Linux)
+        readline.parse_and_bind("tab: complete")
+
+    # Show all matches on first tab press (works on both)
     readline.parse_and_bind("set show-all-if-ambiguous on")
 
     return completer
